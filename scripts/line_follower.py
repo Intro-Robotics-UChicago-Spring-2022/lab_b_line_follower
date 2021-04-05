@@ -17,6 +17,8 @@ class Follower:
                 # subscribe to the robot's RGB camera data stream
                 self.image_sub = rospy.Subscriber('camera/rgb/image_raw',
                         Image, self.image_callback)
+                
+                # TODO: set up cmd_vel publisher 
 
         def image_callback(self, msg):
 
@@ -25,11 +27,14 @@ class Follower:
                 hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
                 # TODO: define the upper and lower bounds for what should be considered 'yellow'
+                # Note: see class page for hints on this
                 lower_yellow = numpy.array([0, 0, 0]) #TODO
                 upper_yellow = numpy.array([0, 0, 0]) #TODO
+                
+                # this erases all pixels that aren't yellow
                 mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
 
-                # this erases all pixels that aren't yellow
+                # this limits our search scope to only view a slice of the image near the ground
                 h, w, d = image.shape
                 search_top = int(3*h/4)
                 search_bot = int(3*h/4 + 20)
@@ -46,6 +51,7 @@ class Follower:
 
                         # a red circle is visualized in the debugging window to indicate
                         # the center point of the yellow pixels
+                        # hint: if you don't see a red circle, check your bounds for what is considered 'yellow'
                         cv2.circle(image, (cx, cy), 20, (0,0,255), -1)
 
                         # TODO: based on the location of the line (approximated
@@ -54,6 +60,7 @@ class Follower:
                         #       the yellow line
 
                 # shows the debugging window
+                # hint: you might want to disable this once you're able to get a red circle in the debugging window
                 cv2.imshow("window", image)
                 cv2.waitKey(3)
 
